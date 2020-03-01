@@ -1,5 +1,9 @@
 # create an ECS Cluster with capacity provider for the instance autoscale
 
+data "aws_region" "current_region" {}
+
+data "aws_caller_identity" "current" {}
+
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = var.app_name
   capacity_providers = [aws_ecs_capacity_provider.capacity_provider.name]
@@ -183,6 +187,11 @@ resource "aws_autoscaling_group" "autoscaling_group" {
     {
       key                 = "Application"
       value               = var.app_name
+      propagate_at_launch = true
+    },
+    {
+      key                 = "DependsId"
+      value               = var.depends_id
       propagate_at_launch = true
     },
   ]

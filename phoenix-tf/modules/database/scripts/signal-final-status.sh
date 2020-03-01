@@ -37,10 +37,10 @@ log `date` signal-final-status.sh
 
 if [ "${SIGNAL}" == "0" ]; then
 ##  curl -X PUT -H 'Content-Type:' --data-binary '{"Status" : "SUCCESS","Reason" : "The MongoDB cluster has been installed and is ready","UniqueId" : "MongoDBCluster","Data" : "Done"}'  ${WAITHANDLER}
-   /opt/aws/bin/cfn-signal -e 0 -r "MongoDB Node install success." "${WAITHANDLER}"
+   /opt/aws/bin/cfn-signal --exit-code 0 --stack "${CFN_STACK}" --resource ReplicaNodeInstance --region "${REGION}"
 else
 ##  curl -X PUT -H 'Content-Type:' --data-binary '{"Status" : "FAILURE","Reason" : "The MongoDB cluster did not complete. Will delete all resources.","UniqueId" : "MongoDBCluster","Data" : "Failed"}'  ${WAITHANDLER}
-  /opt/aws/bin/cfn-signal -e 1 -r "MongoDB Node install did not succeed." "${WAITHANDLER}"
+  /opt/aws/bin/cfn-signal --exit-code 1 --stack "${CFN_STACK}" --resource ReplicaNodeInstance --region "${REGION}"
 fi
 
 log `date` END signal-final-status.sh

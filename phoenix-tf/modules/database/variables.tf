@@ -33,6 +33,11 @@ variable "bastion_sg" {
     description = "Bastion host security group ID"
 }
 
+variable "cluster_sg" {
+    type = string
+    description = "Cluster security group ID"
+}
+
 variable "key_pair_name" {
   description = "Name of AWS key pair"
   type        = string
@@ -41,11 +46,13 @@ variable "key_pair_name" {
 variable "mongodb_admin_password" {
     description = "MongoDB Admin password"
     type = string
+    default = "password0001"
 }
 
 variable "mongodb_admin_username" {
     description = "MongoDB Admin username"
     type = string
+    default = "admin"
 }
 
 variable "mongodb_app_user_password" {
@@ -83,3 +90,24 @@ variable "mongodb_instance_type" {
     default = "m4.large"
 }
 
+variable "mongodb_db_test_app_name" {
+    description = "MongoDB database name for test app"
+    type = string
+    default = "phoenixtestdb"
+}
+
+variable "mongodb_db_app_name" {
+    description = "MongoDB database name for production app"
+    type = string
+    default = "phoenixdb"
+}
+
+variable "cluster_replicaset_count" {
+    description = "Numbers of replicaset in the MongoDB cluster"
+    type = number
+    default = 3
+}
+
+variable "depends_id" {
+  description = "Workaround to wait for the NAT gateway to finish before starting the instances"
+}

@@ -1,6 +1,6 @@
 resource "aws_alb" "loadbalancer" {
   name            = "${var.app_name}-alb"
-  subnets         = [var.public_subnet_ids]
+  subnets         = var.public_subnet_ids
   security_groups = [aws_security_group.lb_sg.id]
 
   tags = {
@@ -22,45 +22,36 @@ resource "aws_alb_target_group" "target_group" {
   }
 }
 
-resource "aws_alb_listener" "front_end" {
+resource "aws_alb_listener" "front_end_http" {
+  count = var.ssl == 1 ? 0 : 1
   load_balancer_arn = aws_alb.loadbalancer.arn
   port              = "80"
   protocol          = "HTTP"
 
-  default_action = {
+  default_action {
     target_group_arn = aws_alb_target_group.target_group.id
     type             = "forward"
   }
 }
 
 #################### ENABLE HTTPS  ##########################
-/*resource "aws_alb_listener" "front_end" {
+resource "aws_alb_listener" "front_end_https" {
+  count = var.ssl == 1 ? 1 : 0
   load_balancer_arn = aws_alb.loadbalancer.arn
   port              = "443"
   protocol          = "HTTPS"
   certificate_arn   = var.backend_certificate
   ssl_policy        = "ELBSecurityPolicy-2016-08"
 
-  default_action = {
+  default_action {
     target_group_arn = aws_alb_target_group.target_group.id
     type             = "forward"
   }
 }
-
-
-resource "aws_alb_listener" "front_end" {
-  load_balancer_arn = "${aws_alb.loadbalancer.arn}"
-  port              = "80"
-  protocol          = "HTTP"
-
-  default_action = {
-    target_group_arn = "${aws_alb_target_group.target_group.id}"
-    type             = "forward"
-  }
-}*/
+#################### ENABLE HTTPS  ##########################
 
 resource "aws_alb_listener_rule" "front_end_url" {
-  listener_arn = aws_alb_listener.front_end.arn
+  listener_arn = var.ssl == 1 ? aws_alb_listener.front_end_https[0].arn : aws_alb_listener.front_end_http[0].arn
 
   action {
     target_group_arn = aws_alb_target_group.target_group.id
@@ -68,7 +59,8 @@ resource "aws_alb_listener_rule" "front_end_url" {
   }
 
   condition {
-    field  = "path-pattern"
-    values = ["/"]
+    path_pattern {
+      values = ["/"]
+    }    
   }
 }

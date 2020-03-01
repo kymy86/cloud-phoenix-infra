@@ -31,6 +31,7 @@ resource "aws_instance" "bastion_host" {
     Name        = "Bastion Host"
     Environment = var.environment
     Application = var.app_name
+    DependsId = var.depends_id
   }
 }
 

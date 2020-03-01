@@ -8,13 +8,13 @@ resource "aws_cloudwatch_log_group" "cw_log_group" {
 data "template_file" "td_template" {
   template = file("${path.module}/templates/task_definition.json")
 
-  vars {
+  vars = {
     docker_repo          = var.docker_repo_url
     container_port       = var.container_port
     container_name       = var.app_name
     app_name             = "${var.app_name}-${var.svc_name}"
     cwlogs_group_main    = aws_cloudwatch_log_group.cw_log_group.name
-    region_name          = aws_region.current_region.name
+    region_name          = data.aws_region.current_region.name
     cw_prefix            = var.app_name
   }
 }
@@ -77,7 +77,7 @@ resource "aws_appautoscaling_policy" "ecs_app_up_policy" {
   target_tracking_scaling_policy_configuration {
       predefined_metric_specification {
           predefined_metric_type = "ALBRequestCountPerTarget"
-
+          resource_label = var.resource_label
       }
 
       target_value = 60

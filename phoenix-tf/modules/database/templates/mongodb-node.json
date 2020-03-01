@@ -166,8 +166,18 @@
             "NoEcho": "true",
             "Type": "String"
         },
-        "ReplicaNodeWaitForNodeInstallWaitHandle": {
-            "Description": "Pre-signed Wait Handle URL to send signal for associated wait condition",
+        "MongoDBAppName": {
+            "AllowedPattern": "([A-Za-z0-9_-]{4,32})",
+            "ConstraintDescription": "Input your MongoDB database name, Min 4, Maximum of 32 characters. . Allowed characters are: [A-Za-z0-9_-]",
+            "Description": "Enter your MongoDB Database name for your app, Min 4, maximum of 32 characters.",
+            "NoEcho": "true",
+            "Type": "String"
+        },
+        "MongoDBTestAppName": {
+            "AllowedPattern": "([A-Za-z0-9_-]{4,32})",
+            "ConstraintDescription": "Input your MongoDB Test database name, Min 4, Maximum of 32 characters. . Allowed characters are: [A-Za-z0-9_-]",
+            "Description": "Enter your MongoDB Test Database name for your app, Min 4, maximum of 32 characters.",
+            "NoEcho": "true",
             "Type": "String"
         },
         "BucketName": {
@@ -204,6 +214,12 @@
         },
         "ReplicaNodeInstance": {
             "Type": "AWS::EC2::Instance",
+            "CreationPolicy":{
+                "ResourceSignal":{
+                    "Count": 1,
+                    "Timeout":"PT10M"
+                }
+            },
             "Metadata": {
                 "HostRole": "MongoDB Node",
                 "AWS::CloudFormation::Init": {
@@ -279,6 +295,10 @@
                         "Value": {
                             "Ref": "ReplicaShardIndex"
                         }
+                    },
+                    {
+                        "Key": "Snapshot",
+                        "Value": "true"
                     }
                 ],
                 "BlockDeviceMappings": [
@@ -351,7 +371,7 @@
                                 {
                                     "Ref": "BucketName"
                                 },
-                                "/init_replica.sh init.sh\n",
+                                "/init-replica.sh init.sh\n",
                                 "aws s3 cp s3://",
                                 {
                                     "Ref": "BucketName"
@@ -379,6 +399,32 @@
                                     "Fn::Join": [
                                         "",
                                         [
+                                            "export CFN_STACK=",
+                                            {
+                                                "Ref": "AWS::StackName"
+                                            }
+                                        ]
+                                    ]
+                                },
+                                " >> config.sh\n",
+                                "echo ",
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "export REGION=",
+                                            {
+                                                "Ref": "AWS::Region"
+                                            }
+                                        ]
+                                    ]
+                                },
+                                " >> config.sh\n",
+                                "echo ",
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
                                             "export MongoDBVersion=",
                                             {
                                                 "Ref": "MongoDBVersion"
@@ -396,23 +442,6 @@
                                             {
                                                 "Ref": "VPC"
                                             }
-                                        ]
-                                    ]
-                                },
-                                " >> config.sh\n",
-                                "#  Store WaitHandler\n",
-                                "echo ",
-                                {
-                                    "Fn::Join": [
-                                        "",
-                                        [
-                                            "\"",
-                                            "export WAITHANDLER='",
-                                            {
-                                                "Ref": "ReplicaNodeWaitForNodeInstallWaitHandle"
-                                            },
-                                            "'",
-                                            "\""
                                         ]
                                     ]
                                 },
@@ -454,6 +483,35 @@
                                     ]
                                 },
                                 " >> config.sh\n",
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "export MONGODB_DB_APP_NAME=",
+                                            {
+                                                "Ref": "MongoDBAppName"
+                                            }
+                                        ]
+                                    ]
+                                },
+                                " >> config.sh\n",
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "export MONGODB_DB_TEST_APP_NAME=",
+                                            {
+                                                "Ref": "MongoDBTestAppName"
+                                            }
+                                        ]
+                                    ]
+                                },
+                                " >> config.sh\n",
+                                "AWS_AVAIL_ZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone)\n",
+                                "AWS_REGION=${AWS_AVAIL_ZONE::-1}\n",
+                                "AWS_INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)\n",
+                                "VOLUME_IDS=$(aws ec2 describe-instances --region $AWS_REGION --instance-id $AWS_INSTANCE_ID --output text --query Reservations[0].Instances[0].BlockDeviceMappings[].Ebs.VolumeId)\n",
+                                "aws ec2 create-tags --resources $VOLUME_IDS --region $AWS_REGION --tags Key=Snapshot,Value=true\n",
                                 "mkdir -p /mongo_auth \n",
                                 "./init.sh > install.log 2>&1 \n",
                                 "#  Cleanup \n",
@@ -467,42 +525,6 @@
                 "InstanceType": {
                     "Ref": "NodeInstanceType"
                 }
-            }
-        },
-        "NodeInstanceRecoveryAlarm": {
-            "Type": "AWS::CloudWatch::Alarm",
-            "Condition": "InstanceRecoverySupported",
-            "Properties": {
-                "AlarmDescription": "EC2 Autorecovery for Node Instance. Autorecover if we fail EC2 status checks for 5 minutes.",
-                "Namespace": "AWS/EC2",
-                "MetricName": "StatusCheckFailed_System",
-                "Statistic": "Minimum",
-                "Period": 60,
-                "EvaluationPeriods": 5,
-                "ComparisonOperator": "GreaterThanThreshold",
-                "Threshold": 0.0,
-                "AlarmActions": [
-                    {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "arn:aws:automate:",
-                                {
-                                    "Ref": "AWS::Region"
-                                },
-                                ":ec2:recover"
-                            ]
-                        ]
-                    }
-                ],
-                "Dimensions": [
-                    {
-                        "Name": "InstanceId",
-                        "Value": {
-                            "Ref": "ReplicaNodeInstance"
-                        }
-                    }
-                ]
             }
         }
     },

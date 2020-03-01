@@ -57,7 +57,7 @@ resource "aws_security_group" "lb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
+  tags = {
     Name    = "Security group for Load Balancer"
     Environment = var.environment
     Application = var.app_name

@@ -16,8 +16,8 @@ resource "aws_cloudwatch_metric_alarm" "cpu_used" {
   statistic           = "Average"
   threshold           = "70"
 
-  dimensions {
-    ClusterName = var.cluster
+  dimensions = {
+    ClusterName = var.app_name
     ServiceName = aws_ecs_service.service.name
   }
 

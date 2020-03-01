@@ -26,14 +26,14 @@ resource "aws_security_group" "mongodb_sg" {
     from_port       = 27017
     to_port         = 27030
     protocol        = "tcp"
-    security_groups = [aws_security_group.mongodb_access_sg.id]
+    security_groups = [aws_security_group.mongodb_access_sg.id, var.cluster_sg]
   }
 
   ingress {
     from_port       = 28017
     to_port         = 28017
     protocol        = "tcp"
-    security_groups = [aws_security_group.mongodb_access_sg.id]
+    security_groups = [aws_security_group.mongodb_access_sg.id, var.cluster_sg]
   }
 
   egress {

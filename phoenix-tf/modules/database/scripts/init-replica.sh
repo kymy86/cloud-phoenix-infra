@@ -143,6 +143,8 @@ setup_security_primary() {
     DDB_TABLE=$1
     port=27017
     MONGO_PASSWORD=$( cat /tmp/mongo_pass.txt )
+    MONGO_USER_PASSWORD=$( cat /tmp/mongo_user_pass.txt )
+    MONGO_TEST_USER_PASSWORD=$( cat /tmp/mongo_user_test_pass.txt )
 
 mongo --port ${port} << EOF
 use admin;
@@ -151,6 +153,20 @@ db.createUser(
     user: "${MONGODB_ADMIN_USER}",
     pwd: "${MONGO_PASSWORD}",
     roles: [ { role: "root", db: "admin" } ]
+  }
+);
+db.createUser(
+  {
+    user: "${MONGODB_APP_USER}",
+    pwd: "${MONGO_USER_PASSWORD}",
+    roles: [ { role: "dbOwner", db: "${MONGODB_DB_APP_NAME}" } ]
+  }
+);
+db.createUser(
+  {
+    user: "${MONGODB_APP_TEST_USER}",
+    pwd: "${MONGO_TEST_USER_PASSWORD}",
+    roles: [ { role: "dbOwner", db: "${MONGODB_DB_TEST_APP_NAME}" } ]
   }
 );
 EOF
@@ -392,7 +408,7 @@ EOF
 
     ./orchestrator.sh -w "SECURED=${NODES}" -n "${SHARD}_${UNIQUE_NAME}"
     ./orchestrator.sh -d -n "${SHARD}_${UNIQUE_NAME}"
-    rm /tmp/mongo_pass.txt
+    rm -f /tmp/mongo_pass.txt /tmp/mongo_user_pass.txt mongo_user_test_pass.txt
 else
     #################################################################
     #  Update status of Secondary to FINISHED
@@ -405,7 +421,7 @@ else
     setup_security_common "${SHARD}_${UNIQUE_NAME}"
     service mongod start
     ./orchestrator.sh -s "SECURED" -n "${SHARD}_${UNIQUE_NAME}"
-    rm /tmp/mongo_pass.txt
+    rm -f /tmp/mongo_pass.txt /tmp/mongo_user_pass.txt mongo_user_test_pass.txt
 
 fi
 

@@ -80,3 +80,19 @@ variable "healthcheck_path" {
   description = "Healthcheck path"
   default = "/"
 }
+
+variable "depends_id" {
+  description = "Workaround to wait for the NAT gateway to finish before starting the instances"
+}
+
+variable "backend_certificate" {
+  description = "SSL backend certificate"
+  type = string
+  default = ""
+}
+
+variable "ssl" {
+  description = "Decide if enable or not HTTP connection"
+  type = number
+  default = 0
+}

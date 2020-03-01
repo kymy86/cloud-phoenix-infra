@@ -31,13 +31,24 @@ Example: ~/.ssh/private_key.pem
   type = string
 }
 
+variable "aws_public_key_path" {
+  description = <<DESCRIPTION
+Path to the SSH public key to be used for authentication.
+Ensure this keypair is added to your local SSH agent so provisioners can
+connect.
+Example: ~/.ssh/public_key.pub
+  DESCRIPTION
+
+  type = string
+}
+
 variable "aws_profile" {
   description = "AWS CLI profile"
   type        = string
 }
 
 variable "app_name" {
-  default = "phoenix-project"
+  default = "phoenix"
   type    = string
 }
 
@@ -76,5 +87,22 @@ variable "docker_repo_url"{
 variable "container_port"{
     description = "Container port name"
     type = string
+    default = "3000"
 }
 
+variable "container_name" {
+    description = "Docker image name"
+    type = string
+}
+
+variable "backend_certificate" {
+  description ="Certificate for HTTPS connection"
+  type = string
+  default = ""
+}
+
+variable "ssl" {
+  description ="Decide if enable or not HTTPS"
+  type = number
+  default = 0
+}

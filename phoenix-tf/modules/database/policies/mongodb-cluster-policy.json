@@ -22,29 +22,23 @@
         "Action": [
             "s3:GetObject"
         ],
-        "Resource": {
-            "Fn::Sub": "${bucket_arn}/*"
-        }
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-          "dynamodb:BatchGetItem",
-          "dynamodb:CreateTable",
-          "dynamodb:DeleteTable",
-          "dynamodb:DescribeTable",
-          "dynamodb:GetItem",
-          "dynamodb:PutItem",
-          "dynamodb:Query",
-          "dynamodb:Scan",
-          "dynamodb:UpdateItem",
-          "dynamodb:UpdateTable"
-      ],
-      "Resource": [
-          {
-              "Fn::Sub": "arn:aws:dynamodb:${region}:${account_id}:table/*MONGODB_*"
-          }
-      ]
-  }
+        "Resource": "${bucket_arn}/*"
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+            "dynamodb:BatchGetItem",
+            "dynamodb:CreateTable",
+            "dynamodb:DeleteTable",
+            "dynamodb:DescribeTable",
+            "dynamodb:GetItem",
+            "dynamodb:PutItem",
+            "dynamodb:Query",
+            "dynamodb:Scan",
+            "dynamodb:UpdateItem",
+            "dynamodb:UpdateTable"
+        ],
+        "Resource": "arn:aws:dynamodb:${region}:${account_id}:table/*MONGODB_*"
+       }
     ]
 }
