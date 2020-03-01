@@ -1,0 +1,40 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": [
+          "cloudwatch:PutMetricData",
+          "cloudwatch:GetMetricStatistics",
+          "cloudwatch:ListMetrics",
+          "ec2:DescribeTags",
+          "ds:CreateComputer",
+          "ds:DescribeDirectories",
+          "ec2:DescribeInstanceStatus",
+          "logs:*",
+          "ssm:*",
+          "ec2messages:*",
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:GetRepositoryPolicy",
+          "ecr:DescribeRepositories",
+          "ecr:ListImages",
+          "ecr:DescribeImages",
+          "ecr:BatchGetImage",
+          "ecs:CreateCluster",
+          "ecs:DeregisterContainerInstance",
+          "ecs:DiscoverPollEndpoint",
+          "ecs:Poll",
+          "ecs:RegisterContainerInstance",
+          "ecs:StartTelemetrySession",
+          "ecs:Submit*",
+          "ecs:StartTask",
+          "s3:*",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      }
+    ]
+}

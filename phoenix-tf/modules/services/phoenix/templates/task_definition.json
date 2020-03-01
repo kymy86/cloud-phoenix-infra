@@ -1,0 +1,32 @@
+[
+    {
+        "name": "${container_name}",
+        "image": "${docker_repo}",
+        "memory": 500,
+        "essential": true,
+        "portMappings": [
+        {
+            "containerPort": ${container_port},
+            "protocol": "tcp"
+        }
+        ],
+        "environment":[
+            {
+                "name":"NODE_ENV",
+                "value":"production"
+            },
+            {
+                "name": "PORT",
+                "value": "3000"
+            }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "${cwlogs_group_main}",
+                "awslogs-region": "${region_name}",
+                "awslogs-stream-prefix": "${cw_prefix}"
+            }
+        }
+    }
+]

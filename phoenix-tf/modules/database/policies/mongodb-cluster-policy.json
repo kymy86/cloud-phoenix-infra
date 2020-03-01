@@ -1,0 +1,50 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": [
+            "ec2:Describe*",
+            "ec2:AttachNetworkInterface",
+            "ec2:AttachVolume",
+            "ec2:CreateTags",
+            "ec2:CreateVolume",
+            "ec2:RunInstances",
+            "ec2:StartInstances",
+            "ec2:DeleteVolume",
+            "ec2:CreateSecurityGroup",
+            "ec2:CreateSnapshot"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+            "s3:GetObject"
+        ],
+        "Resource": {
+            "Fn::Sub": "${bucket_arn}/*"
+        }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+          "dynamodb:BatchGetItem",
+          "dynamodb:CreateTable",
+          "dynamodb:DeleteTable",
+          "dynamodb:DescribeTable",
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:Query",
+          "dynamodb:Scan",
+          "dynamodb:UpdateItem",
+          "dynamodb:UpdateTable"
+      ],
+      "Resource": [
+          {
+              "Fn::Sub": "arn:aws:dynamodb:${region}:${account_id}:table/*MONGODB_*"
+          }
+      ]
+  }
+    ]
+}
