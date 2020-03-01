@@ -48,6 +48,29 @@ variable "mongodb_admin_username" {
     type = string
 }
 
+variable "mongodb_app_user_password" {
+    description = "MongoDB App user password"
+    type = string
+    default = "phoenixpwd"
+}
+
+variable "mongodb_app_username" {
+    description = "MongoDB App username"
+    type = string
+    default = "phoenix"
+}
+variable "mongodb_app_test_user_password" {
+    description = "MongoDB App Test user password"
+    type = string
+    default = "phoenixpwdtest"
+}
+
+variable "mongodb_app_test_username" {
+    description = "MongoDB App Test username"
+    type = string
+    default = "phoenixtest"
+}
+
 variable "mongodb_version" {
     description = "MongoDB Version"
     type = string
