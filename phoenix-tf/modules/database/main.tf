@@ -1,4 +1,5 @@
 
+#last linux ami 
 data "aws_ami" "linux_ami" {
   most_recent = true
 
@@ -24,6 +25,7 @@ data "aws_region" "current_region" {}
 
 data "aws_caller_identity" "current" {}
 
+#configure the bucket where stored the MongoDB configuration scripts
 resource "aws_s3_bucket" "mongodb_config_bucket" {
   acl = "private"
   force_destroy = true
@@ -43,6 +45,12 @@ resource "null_resource" "copy_scripts" {
     }
 }
 
+/**
+* Since Terraform doesn't have the cfn-signal support
+* I used a standard CloudFormation stack to provision the MongoDB Nodes
+*/
+
+#Primary MongoDB node
 resource "aws_cloudformation_stack" "mongo_primary_node" {
     name = "primary-node-stack"
     parameters = {
@@ -77,6 +85,7 @@ resource "aws_cloudformation_stack" "mongo_primary_node" {
     depends_on = [null_resource.copy_scripts]
 }
 
+# Secondary 1 MongoDB node
 resource "aws_cloudformation_stack" "mongo_secondary_node_1" {
     name = "secondary-node-1-stack"
     parameters = {
@@ -111,6 +120,7 @@ resource "aws_cloudformation_stack" "mongo_secondary_node_1" {
     depends_on = [null_resource.copy_scripts]
 }
 
+# Secondary 2 MongoDB node
 resource "aws_cloudformation_stack" "mongo_secondary_node_2" {
     name = "secondary-node-2-stack"
     parameters = {

@@ -1,7 +1,7 @@
 data "aws_region" "current_region" {}
 
 resource "aws_cloudwatch_log_group" "cw_log_group" {
-  name              = "${var.app_name}/${var.svc_name}"
+  name              = "/${var.app_name}/${var.svc_name}"
   retention_in_days = 7
 }
 
@@ -68,7 +68,7 @@ resource "aws_appautoscaling_target" "ecs_target" {
 }
 
 resource "aws_appautoscaling_policy" "ecs_app_up_policy" {
-  name               = "${var.app_name}-cpu-auto-scaling-up"
+  name               = "${var.app_name}-rps-auto-scaling"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
@@ -80,7 +80,9 @@ resource "aws_appautoscaling_policy" "ecs_app_up_policy" {
           resource_label = var.resource_label
       }
 
-      target_value = 60
+      target_value = 600 #the minimum metric granularity is 1 minute, so 10 rps == 600 rpm
+      scale_in_cooldown  = 180
+      scale_out_cooldown = 180
   }
 
   depends_on = [aws_appautoscaling_target.ecs_target]

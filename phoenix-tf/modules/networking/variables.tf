@@ -4,7 +4,7 @@ variable "app_name" {
 
 variable "environment" {
   description = "Environment name"
-  default = "Production"
+  default     = "Production"
   type        = string
 }
 

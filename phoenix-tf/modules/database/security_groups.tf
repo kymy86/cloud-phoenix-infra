@@ -3,10 +3,21 @@ resource "aws_security_group" "mongodb_access_sg" {
   description = "Instances with access to MongoDB servers"
   vpc_id      = var.vpc_id
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
     Name        = "Security group MongoDB instances"
     Environment = var.environment
     Application = var.app_name
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -48,6 +59,10 @@ resource "aws_security_group" "mongodb_sg" {
     Environment = var.environment
     Application = var.app_name
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group" "mongodb_intra_sg" {
@@ -87,5 +102,9 @@ resource "aws_security_group" "mongodb_intra_sg" {
     Name        = "MongoDB inter-server communication and management ports"
     Environment = var.environment
     Application = var.app_name
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }

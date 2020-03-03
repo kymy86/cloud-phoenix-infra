@@ -80,29 +80,49 @@ variable "cluster_min_size" {
   default     = 1
 }
 
-variable "docker_repo_url"{
-    description = "URL of docker repository where phoenix source code is stored"
-    type = string
+variable "docker_repo_url" {
+  description = "URL of docker repository where phoenix source code is stored"
+  type        = string
 }
-variable "container_port"{
-    description = "Container port name"
-    type = string
-    default = "3000"
+variable "container_port" {
+  description = "Container port name"
+  type        = string
+  default     = "3000"
 }
 
-variable "container_name" {
-    description = "Docker image name"
-    type = string
+variable "image_name" {
+  description = "Docker image name"
+  type        = string
 }
 
 variable "backend_certificate" {
-  description ="Certificate for HTTPS connection"
-  type = string
-  default = ""
+  description = "Certificate for HTTPS connection"
+  type        = string
+  default     = ""
 }
 
 variable "ssl" {
-  description ="Decide if enable or not HTTPS"
-  type = number
-  default = 0
+  description = "Decide if enable or not HTTPS"
+  type        = number
+  default     = 0
+}
+
+variable "github_repo" {
+  type        = string
+  description = "URL of GitHUB repository"
+}
+
+variable "github_oauth_token" {
+  type        = string
+  description = "GitHUB token"
+}
+
+variable "github_owner" {
+  type        = string
+  description = "GitHUB repo owner"
+}
+
+variable "github_repo_name" {
+  type        = string
+  description = "GitHUB repo name"
 }

@@ -1,3 +1,5 @@
+#Saving the database connection strings in the parameter store.
+
 
 resource "aws_ssm_parameter" "connection_string_prod" {
     name = "/${var.app_name}/db_connection_string"

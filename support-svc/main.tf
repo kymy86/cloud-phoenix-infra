@@ -4,7 +4,7 @@ provider "aws" {
 }
 
 resource "aws_dynamodb_table" "terraform-state-locking" {
-   name = var.lock_table_name
+   name = "${var.app_name}${var.lock_table_name}"
    hash_key = "LockID"
    read_capacity = 20
    write_capacity = 20
@@ -15,23 +15,23 @@ resource "aws_dynamodb_table" "terraform-state-locking" {
    }
 
    tags = {
-     Name = "Phoenix Terraform Lock Table"
+     Name = "${title(var.app_name)} Terraform Lock Table"
    }
 }
 
-resource "aws_s3_bucket" "phoenix-terraform-bucket" {
+resource "aws_s3_bucket" "terraform-bucket" {
   acl = "private"
   force_destroy = true
-  bucket = var.state_bucket_name
+  bucket = "${var.app_name}${var.state_bucket_name}"
   tags = {
-    Name = "Phoenix terraform state bucket"
+    Name = "${title(var.app_name)} terraform state bucket"
   }
 }
 
-resource "aws_ecr_repository" "phoenix_repo" {
-    name = var.phoenix_repo
+resource "aws_ecr_repository" "application_repo" {
+    name = var.app_name
     tags = {
-        Name = "Phoenix docker repository"
+        Name = "${title(var.app_name)} docker repository"
     }
 }
 
@@ -41,6 +41,6 @@ data "template_file" "ecr_policy_template" {
 }
 
 resource "aws_ecr_lifecycle_policy" "phoenix_repo_policy" {
-    repository = aws_ecr_repository.phoenix_repo.name
+    repository = aws_ecr_repository.application_repo.name
     policy = data.template_file.ecr_policy_template.rendered
 }

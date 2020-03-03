@@ -19,22 +19,22 @@ state_file = /var/lib/awslogs/agent-state
  
 [/var/log/messages]
 file = /var/log/messages
-log_group_name = ${cluster_name}/var/log/messages
+log_group_name = /${cluster_name}/var/log/messages
 log_stream_name = ${cluster_name}/{container_instance_id}
 datetime_format = %b %d %H:%M:%S
 [/var/log/docker]
 file = /var/log/docker
-log_group_name = ${cluster_name}/var/log/docker
+log_group_name = /${cluster_name}/var/log/docker
 log_stream_name = ${cluster_name}/{container_instance_id}
 datetime_format = %Y-%m-%dT%H:%M:%S.%f
 [/var/log/ecs/ecs-init.log]
 file = /var/log/ecs/ecs-init.log.*
-log_group_name = ${cluster_name}/var/log/ecs/ecs-init.log
+log_group_name = /${cluster_name}/var/log/ecs/ecs-init
 log_stream_name = ${cluster_name}/{container_instance_id}
 datetime_format = %Y-%m-%dT%H:%M:%SZ
 [/var/log/ecs/ecs-agent.log]
 file = /var/log/ecs/ecs-agent.log.*
-log_group_name = ${cluster_name}/var/log/ecs/ecs-agent.log
+log_group_name = /${cluster_name}/var/log/ecs/ecs-agent
 log_stream_name = ${cluster_name}/{container_instance_id}
 datetime_format = %Y-%m-%dT%H:%M:%SZ
 EOF

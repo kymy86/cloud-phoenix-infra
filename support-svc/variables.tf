@@ -9,20 +9,19 @@ variable "aws_profile" {
   type        = string
 }
 
+variable "app_name" {
+  type    = string
+  default = "phoenix"
+}
+
 variable "state_bucket_name" {
-    type = string
-    description = "Terraform state bucket name"
-    default = "phoenix-terraform-bucket"
+  type        = string
+  description = "Terraform state bucket name"
+  default     = "-terraform-bucket"
 }
 
 variable "lock_table_name" {
-    type = string
-    description = "Name of the Dynamo DB table where store the lock"
-    default = "phoenix-terraform-state-locking"
-}
-
-variable "phoenix_repo" {
-    type = string
-    description = "Phoenix Docker repository"
-    default = "phoenix"
+  type        = string
+  description = "Name of the Dynamo DB table where store the lock"
+  default     = "-terraform-state-locking"
 }

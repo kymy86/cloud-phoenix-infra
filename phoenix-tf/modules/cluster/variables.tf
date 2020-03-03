@@ -32,9 +32,9 @@ DESCRIPTION
 }
 
 variable "instance_type" {
-  type = string
+  type        = string
   description = "Cluster instance type"
-  default = "m4.large"
+  default     = "m4.large"
 }
 
 variable "key_pair_name" {
@@ -78,21 +78,22 @@ variable "min_size" {
 variable "healthcheck_path" {
   type        = string
   description = "Healthcheck path"
-  default = "/"
+  default     = "/"
 }
 
 variable "depends_id" {
   description = "Workaround to wait for the NAT gateway to finish before starting the instances"
+  type        = string
 }
 
 variable "backend_certificate" {
   description = "SSL backend certificate"
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 variable "ssl" {
   description = "Decide if enable or not HTTP connection"
-  type = number
-  default = 0
+  type        = number
+  default     = 0
 }

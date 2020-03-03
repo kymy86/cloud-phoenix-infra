@@ -45,9 +45,10 @@ Example: ~/.ssh/private_key.pem
 
 variable "ips_bastion_source" {
   description = "Bastion host access is allowed only from this ip addresses"
-  type = list(string)
+  type        = list(string)
 }
 
 variable "depends_id" {
   description = "Workaround to wait for the NAT gateway to finish before starting the instances"
+  type        = string
 }

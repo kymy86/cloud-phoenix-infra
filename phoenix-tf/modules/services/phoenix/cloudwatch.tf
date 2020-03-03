@@ -1,3 +1,4 @@
+#Register the SNS topic
 resource "aws_sns_topic" "cpu_peak_alert" {
   name = "${var.app_name}-cpu-peak-alert"
 
@@ -14,7 +15,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_used" {
   namespace           = "AWS/ECS"
   period              = "60"
   statistic           = "Average"
-  threshold           = "70"
+  threshold           = "50"
 
   dimensions = {
     ClusterName = var.app_name
