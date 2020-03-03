@@ -1,0 +1,22 @@
+version: 0.2
+phases:
+  install:
+    commands:
+       - npm install
+  pre_build:
+    commands:
+        - npm test
+        - eval $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+        - BUILD_ID=$(echo $CODEBUILD_BUILD_ID | cut -d ':' -f 2)
+  build:
+    commands:
+       - docker build -t $NAME:$BUILD_ID --build-arg NODE_ENV=production .
+       - docker tag $NAME:$BUILD_ID $REGISTRY_URL/$NAME:$BUILD_ID
+       - docker tag $NAME:$BUILD_ID $REGISTRY_URL/$NAME:latest
+  post_build:
+    commands:
+       - docker push $REGISTRY_URL/$NAME
+       - echo Writing image definitions file...
+       - printf '[{"name":"%s","imageUri":"%s"}]' $NAME $REGISTRY_URL/$NAME:$BUILD_ID > imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json

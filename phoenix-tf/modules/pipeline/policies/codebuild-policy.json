@@ -1,0 +1,87 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "ssm:GetParameters",
+            "Resource": [
+                "arn:aws:ssm:${region}:${account_id}:parameter/CodeBuild/*",
+                "arn:aws:ssm:${region}:${account_id}:parameter/${app_name}/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateNetworkInterface",
+                "ec2:DescribeDhcpOptions",
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DeleteNetworkInterface",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeVpcs"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateNetworkInterfacePermission"
+            ],
+            "Resource": "arn:aws:ec2:${region}:${account_id}:network-interface/*",
+            "Condition": {
+                "StringEquals": {
+                    "ec2:Subnet": [
+                        "arn:aws:ec2:${region}:${account_id}:subnet/${subnet_1}",
+                        "arn:aws:ec2:${region}:${account_id}:subnet/${subnet_2}",
+                        "arn:aws:ec2:${region}:${account_id}:subnet/${subnet_3}"
+                    ],
+                    "ec2:AuthorizedService": "codebuild.amazonaws.com"
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Resource": [
+                "${cw_logs_group}",
+                "${cw_logs_group}:*"
+            ],
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "logs:CreateLogStream",
+                "s3:GetBucketAcl",
+                "logs:PutLogEvents",
+                "codebuild:BatchPutTestCases",
+                "s3:GetBucketLocation",
+                "s3:GetObjectVersion"
+            ],
+            "Resource": [
+                "${cw_logs_group}",
+                "${cw_logs_group}:*",
+                "arn:aws:s3:::codepipeline-${region}-*",
+                "arn:aws:s3:::terraform-*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": "ecr:*",
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "logs:CreateLogGroup",
+            "Resource": [
+                "${cw_logs_group}",
+                "${cw_logs_group}:*"
+            ]
+        }
+    ]
+}
