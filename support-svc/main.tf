@@ -22,7 +22,6 @@ resource "aws_dynamodb_table" "terraform-state-locking" {
 resource "aws_s3_bucket" "terraform-bucket" {
   acl = "private"
   force_destroy = true
-  bucket = "${var.app_name}${var.state_bucket_name}"
   tags = {
     Name = "${title(var.app_name)} terraform state bucket"
   }

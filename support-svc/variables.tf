@@ -14,12 +14,6 @@ variable "app_name" {
   default = "phoenix"
 }
 
-variable "state_bucket_name" {
-  type        = string
-  description = "Terraform state bucket name"
-  default     = "-terraform-bucket"
-}
-
 variable "lock_table_name" {
   type        = string
   description = "Name of the Dynamo DB table where store the lock"

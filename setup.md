@@ -20,7 +20,7 @@ You can find these services in the `support-svc` folder and you have to define t
 | `aws_region`  | The AWS region where provision the services | **eu-west-1** |
 | `app_name` | The name of your application and repository | **phoenix** |
 
-After defining the above variables, run the following commands to provision the services:
+After defining the above variables, run the following commands in the `support-svc` folder to provision the services:
 
 ```bash
 $ terraform init
@@ -29,6 +29,27 @@ $ terraform apply
 ```
 
 After the execution, the names of the resources generated and the URL of the ECR repository will be printed as output.
+With this output, you have to create a file inside the `phoenix-tf` folder named **terraform.tf**, with the following content:
+
+```terraform
+terraform {
+  required_version = ">= 0.12.0"
+
+  backend "s3" {
+    bucket  = ""
+    dynamodb_table = ""
+    key     = "phoenix.tfstate"
+    encrypt = true
+    region  = ""
+    profile = ""
+  }
+}
+```
+where:
+- **bucket**: add as value the output `s3_remote_state_bucket` of the `support-svc` project
+- **dynamodb_table**: add as value the output `phoenix-terraform-state-locking` of the `support-svc` project
+- **region**: add the same region specified in the `support-svc` project
+- **profile**: add the same value specified in the `support-svc` project
 
 ### Phoenix infrastructure
 
@@ -47,7 +68,7 @@ You have to dfined the following variables:
 | `ips_bastion_source` | A list of ip addresses. You will be able to connect to the bastion host only from these addresses | - |
 | `notification_email` | The email address used to notify the scaling actions | - |
 | `docker_repo_url` | The base url of the ECR repository, **without the image name**. It's the ouput of the Support Services above | - |
-| `image_name` | The Docker image name. It's the last part of the ECR repository URL printed by the Support Services project | - | 
+| `image_name` | The Docker image name. It's the last part of the ECR repository URL printed by the Support Services project above | - | 
 | `github_repo` | The URL of the GitHub repository where the Phoenix Kata application source code is located. It's required by the Pipeline module | - | 
 | `github_oauth_token` | A valid [GitHub Personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) with the permissions to access to the Phoenix Kata application repo.  | - | 
 | `github_owner` | The owner name of the GitHub repository. It's required by CodePipeline | - | 
@@ -59,13 +80,16 @@ You have to dfined the following variables:
 $ export GITHUB_TOKEN=your_github_personal_access_token
 ```
 
-After defining the above variables, run the following commands to provision the services:
+After defining the above variables, run the following commands in the `phoenix-tf` folder to provision the services:
 
 ```bash
 $ terraform init
 $ terraform plan
 $ terraform apply
 ```
+The output will be something like this:
+
+![](./screenshots/output_phoenix.png)
 
 ### HTTPS support
 
